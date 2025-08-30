@@ -30,7 +30,10 @@ sudo nano /etc/environment
 NTFY_TOPIC="your-topic"
 # Save and exit
 ```
-- Log out and log back in (or source `/etc/environment`) to make `NTFY_TOPIC` available in your shell.
+- Source `NTFY_TOPIC` to make it available in your shell
+```bash
+source /etc/environment
+```
 
 ## Scripts
 
