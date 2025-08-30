@@ -10,10 +10,10 @@
 # If calling source is not provided, brackets are omitted
 
 # Example call from terminal and resulted line in log file
-# /usr/local/bin/generic/log.sh "Disk almost full!" "$0"
+# /usr/local/bin/sysutils/log.sh "Disk almost full!" "$0"
 # 2025-08-30 21:33 [-bash] Disk almost full!
 
-LOG_FILE="/usr/local/bin/generic/logs"
+LOG_FILE="/usr/local/bin/sysutils/logs"
 
 MESSAGE="$1"
 CALLER="$2"  # Optional
