@@ -3,11 +3,11 @@
 # Logging function to log timestamped messages to file
 
 # Usage:
-#   log.sh "{message}" "{optional calling source name}"
+# log.sh "{message}" "{optional calling source name}"
 
 # Logs format:
-#   {timestamp} [{calling_script}] {message}
-#   If calling source is not provided, brackets are omitted
+# {timestamp} [{calling_script}] {message}
+# If calling source is not provided, brackets are omitted
 
 # Example call from terminal and resulted line in log file
 # /usr/local/bin/generic/log.sh "Disk almost full!" "$0"
