@@ -23,17 +23,14 @@ sudo chmod 666 logs
 ```
 
 2. **Configure environment variable:**
+- Make `NTFY_TOPIC` value unique enough to not get spammed
 ```bash
 sudo nano /etc/environment
 # Add:
-# Make it unique enough to prevent spaming
-NTFY_TOPIC="your-topic"
+NTFY_TOPIC="your-unique-topic-name"
 # Save and exit
 ```
-- Source `NTFY_TOPIC` to make it available in your shell
-```bash
-source /etc/environment
-```
+- Then, as Linux user, log out and log back in to load new environment variable to your shell
 
 ## Scripts
 
