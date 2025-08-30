@@ -1,11 +1,17 @@
 #!/bin/bash
 
+# Logging function to log timestamped messages to file
+
 # Usage:
-#   log.sh "Message text" ["Calling script name"]
-#
+#   log.sh "{message}" "{optional calling source name}"
+
 # Logs format:
 #   {timestamp} [{calling_script}] {message}
-#   If calling script is not provided, brackets are omitted.
+#   If calling source is not provided, brackets are omitted
+
+# Example call from terminal and resulted line in log file
+# /usr/local/bin/generic/log.sh "Disk almost full!" "$0"
+# 2025-08-30 21:33 [-bash] Disk almost full!
 
 LOG_FILE="/usr/local/bin/generic/logs"
 
