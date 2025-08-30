@@ -9,11 +9,11 @@
 #   4 -> Priority (optional; default: 3; possible values: 1,2,3,4,5; higher = max priority)
 
 # Example:
-#   /usr/local/bin/generic/notify.sh "Disk space low" "Alert" "warning,disk" 4
+#   /usr/local/bin/sysutils/notify.sh "Disk space low" "Alert" "warning,disk" 4
 
 NTFY_SERVER="https://ntfy.sh"
 TOPIC="$NTFY_TOPIC"   # Must be defined globally in environment
-LOG_SCRIPT="/usr/local/bin/generic/log.sh"
+LOG_SCRIPT="/usr/local/bin/sysutils/log.sh"
 
 # --- Parameters ---
 MESSAGE="$1"
