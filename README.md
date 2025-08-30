@@ -5,6 +5,7 @@ Currently includes logging and NTFY notification utilities. Designed to be deplo
 ## Deployment
 
 1. **Inside `/usr/local/bin/` execute (*):**
+
 (*) 🤔 not sure if this is good practice; maybe use different location
 ```bash
 # Copy scripts to desired location
