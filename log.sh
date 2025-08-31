@@ -3,17 +3,17 @@
 # Logging function to log timestamped messages to file
 
 # Usage:
-# log.sh "{message}" "{optional calling source name}"
+# log "{message}" "{optional calling source name}"
 
 # Logs format:
 # {timestamp} [{calling_script}] {message}
 # If calling source is not provided, brackets are omitted
 
 # Example call from terminal and resulted line in log file
-# /usr/local/bin/sysutils/log.sh "Disk almost full!" "$0"
+# log "Disk almost full!" "$0"
 # 2025-08-30 21:33 [-bash] Disk almost full!
 
-LOG_FILE="/usr/local/bin/sysutils/logs"
+LOG_FILE="/var/log/helpers/log.log"
 
 MESSAGE="$1"
 CALLER="$2"  # Optional
