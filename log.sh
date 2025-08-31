@@ -13,7 +13,7 @@
 # log "Disk almost full!" "$0"
 # 2025-08-30 21:33 [-bash] Disk almost full!
 
-LOG_FILE="/var/log/helpers/log.log"
+LOG_FILE="/var/log/helpers/logs"
 
 MESSAGE="$1"
 CALLER="$2"  # Optional
