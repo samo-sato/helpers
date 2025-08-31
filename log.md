@@ -2,27 +2,32 @@
 
 Contains universal logging function.
 
-**Parameters:**
-1. Message
-2. Name of the source of the message (optional)
+**Flags:**
+* `-m`   Message text (required)
+* `-p`   Log prefix (optional, appears in brackets before the message)
+* `-f`   Log file path * (optional, default: /var/log/helpers/logs)
+* `-h`   Show this help message
+
+\* *Note: if you specify a custom log file path with `-f`, ensure new file is writable by the user running the script*
 
 **Usage:**
 ```bash
-log.sh "{message}" "{optional calling source name}"
+./log.sh -m "Message text" [-p "Log prefix"] [-f "Log file path"]
 ```
 
 **Log format:**
-`{timestamp} [{calling_script}] {message}`
-If calling_script is not provided, the brackets are omitted.
+`{timestamp} [{log_prefix}] {log_message}`
+If prefix is not provided, the brackets are omitted.
 
 **Example - command executed from terminal:**
 ```bash
-log "Disk almost full!" "$0"
+./log.sh -m "Disk almost full!" -p "$0"
 ```
 
 **Produces following log line**
 ```
 2025-08-30 21:33 [-bash] Disk almost full!
 ```
-**Log file location**
+
+**Log file default location**
 `/var/log/helpers/logs`
