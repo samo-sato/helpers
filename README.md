@@ -10,7 +10,7 @@ Currently includes:
 
 ```bash
 # Copy scripts to desired location
-git clone https://github.com/samo-sato/helpers.git
+sudo git clone https://github.com/samo-sato/helpers.git
 
 # Change directory
 cd helpers
