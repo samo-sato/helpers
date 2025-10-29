@@ -6,26 +6,21 @@ Currently includes:
 
 ## Deployment
 
-1. **Inside `/opt/` execute:**
+1. **Execute**
 
 ```bash
-# Copy scripts to desired location
-sudo git clone https://github.com/samo-sato/helpers.git
+# Clone repo to location
+sudo git clone https://github.com/samo-sato/helpers.git /opt/helpers
 
-# Change directory
-cd helpers
+# Allow users to read/write the repo
+sudo chmod -R 777 /opt/helpers
 
-# Make scripts executable
-sudo chmod +x *.sh
-
-# Create directory for logs
-sudo mkdir /var/log/helpers/
-
-# Create log file
-sudo touch /var/log/helpers/logs
-
-# Make log file user writable
-sudo chmod 666 /var/log/helpers/logs
+# Run the install script
+./opt/helpers/utils/install.sh
+# This should:
+# - Create symlinks to individual helpers scripts to /usr/local/bin/ so the scripts could be run by typing just a script name in the terminal
+# - Add hook file to be able to upgrade the local repo from remote repo with regullar OS upgrades
+# - Create directory for logs /var/log/helpers and make it writable for users
 ```
 
 2. **Configure environment variable:**
@@ -38,12 +33,5 @@ NTFY_TOPIC="your-unique-topic-name"
 ```
 - Then, as Linux user, log out and log back in to load new environment variable to your shell
 
-3. **Create symlinks to the helper scripts (optional)**
-```
-sudo ln -s /opt/helpers/log.sh /usr/local/bin/log
-sudo ln -s /opt/helpers/notify.sh /usr/local/bin/notify
-```
-This way you should be able to call the helpers from the terminal using simple keywords
-
-4. **Test the helper scripts**
+3. **Test the helper scripts**
 Please refer to individual README files for each of the helper script
