@@ -7,7 +7,7 @@ It also logs success or failure using the logging function from `log.sh`
 * `-m`   Message text (required)
 * `-t`   Title (optional): default: "Notification"
 * `-g`   Tags (optional):  comma-separated: "tag1,tag2"; example: "floppy_disk,warning"; full tag list: https://docs.ntfy.sh/emojis/
-* `-p`   Priority (optional): default: 3; possible values: 1,2,3,4,5; higher = max priority
+* `-p`   Priority (optional): default: 3; possible values: 1,2,3,4,5; higher number = higher priority
 * `-h`   Show this help message
 
 **Example usage:**
