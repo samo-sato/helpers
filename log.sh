@@ -1,6 +1,8 @@
 #!/bin/bash
 
+# Default file for logging
 DEFAULT_LOG_FILE="/var/log/helpers/logs"
+
 LOG_FILE="$DEFAULT_LOG_FILE"
 MESSAGE=""
 CALLER=""
