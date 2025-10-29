@@ -8,7 +8,7 @@ git fetch origin main
 git reset --hard origin/main
 
 # Make all scripts executable
-find . -type f -name "*.sh" -exec chmod +x {} \;
+find . ./utils -type f -name "*.sh" -exec chmod +x {} \;
 
 # List of scripts to create symlinks for
 SCRIPTS=("log.sh" "notify.sh")  # <-- modify this list
