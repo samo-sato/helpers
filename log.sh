@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Default file for logging
+# Default file for adding logs into it
 DEFAULT_LOG_FILE="/var/log/helpers/logs"
 
 LOG_FILE="$DEFAULT_LOG_FILE"
