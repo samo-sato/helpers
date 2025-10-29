@@ -9,11 +9,11 @@ Currently includes:
 1. **Execute**
 
 ```bash
-# Clone repo to location
-sudo git clone https://github.com/samo-sato/helpers.git /opt/helpers
+# Without sudo, clone repo to temporary user location
+git clone https://github.com/samo-sato/helpers.git ~/helpers
 
-# Allow users to read/write the repo
-sudo chmod -R 777 /opt/helpers
+# With sudo, move the repo to /opt
+sudo mv ~/helpers /opt/helpers
 
 # Run the install script
 ./opt/helpers/utils/install.sh
