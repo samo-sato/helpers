@@ -16,7 +16,7 @@ git clone https://github.com/samo-sato/helpers.git ~/helpers
 sudo mv ~/helpers /opt/helpers
 
 # Run the install script
-./opt/helpers/utils/install.sh
+/opt/helpers/utils/install.sh
 # This should:
 # - Create symlinks to individual helpers scripts to /usr/local/bin/ so the scripts could be run by typing just a script name in the terminal
 # - Add hook file to be able to upgrade the local repo from remote repo with regullar OS upgrades
