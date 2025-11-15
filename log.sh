@@ -8,17 +8,34 @@ MESSAGE=""
 CALLER=""
 
 HELP_TEXT=$(cat <<'EOF'
-Usage: log.sh -m "Message text" [-p "Log prefix"] [-f "Log file path"]
+Usage:
+log.sh -m "Message text" [-p "Log prefix"] [-f "Log file path"]
 
 Options:
   -m   Message text (required)
-  -p   Log prefix (optional, appears in brackets before the message)
-  -f   Log file path (optional, default: /var/log/helpers/logs)
+  -p   Log prefix (optional; appears in brackets before the message)
+  -f   Log file path (optional; default: /var/log/helpers/logs)
   -h   Show this help message
+
+Notes:
+  - If you specify a custom log file with -f, ensure the user running the script
+    has write permissions to the target directory and file.
+  - The script will automatically create the directory path if needed.
+
+Log format:
+  {timestamp} [{log_prefix}] {message}
+  If no prefix is provided, the brackets are omitted.
+
+Timestamp format:
+  YYYY-MM-DD HH:MM
 
 Examples:
   ./log.sh -m "Disk almost full!"
-  ./log.sh -p "Monitoring service" -m "Service stopped!" -f "/var/log/monitoring.log"
+  ./log.sh -m "Service stopped!" -p "MonitoringService"
+  ./log.sh -m "Backup completed" -f "/var/log/backup/backup.log"
+
+Default log file location:
+  /var/log/helpers/logs
 EOF
 )
 

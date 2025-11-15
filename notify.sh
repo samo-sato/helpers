@@ -30,19 +30,37 @@ error_exit() {
     exit "$status"
 }
 
-HELP_TEXT=$(cat <<'EOF'
-Usage: ./notify.sh -m "Message" [-t "Title"] [-g "tag1,tag2"] [-p "Priority"]
+HELP_TEXT=$(cat <<EOF
+Usage:
+./notify.sh -m "Message text" [-t "Title"] [-g "tag1,tag2"] [-p priority]
+
+Universal notification sender using ntfy.sh.
+This script also logs success or failure using the external log.sh helper.
 
 Options:
-  -m    Message (required)
-  -t    Title (optional, default: "Notification")
-  -g    Tags (optional, comma-separated, e.g. "door,warning")
-  -p    Priority (optional, default: 3, range: 1–5)
-  -h    Show this help
+  -m    Message text (required)
+  -t    Title (optional; default: "Notification")
+  -g    Tags (optional; comma-separated, e.g. "door,warning")
+        Full tag list: https://docs.ntfy.sh/emojis/
+  -p    Priority (optional; default: 3 | allowed values: 1–5; higher = higher priority)
+  -h    Show this help message and exit
+
+Behavior:
+  - Sends a notification to the ntfy topic defined by the environment variable NTFY_TOPIC
+  - Logs success and failure using log.sh
+  - Exits with nonzero status when:
+      * curl fails
+      * message is missing
+      * NTFY_TOPIC is missing
+      * server returns non-200/201 HTTP response
 
 Examples:
-  ./notify.sh -m "Disk space low"
-  ./notify.sh -m "Door is open!" -t "Alert" -g "door,warning" -p 4
+./notify.sh -m "Disk space low"
+./notify.sh -m "Door is still open!" -t "Door status" -g "door,warning" -p 4
+
+Environment:
+  NTFY_TOPIC   – required; destination topic for notifications
+  NTFY_SERVER  – optional; default: https://ntfy.sh
 EOF
 )
 
