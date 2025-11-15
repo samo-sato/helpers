@@ -1,18 +1,17 @@
 #!/bin/bash
 
 # Go to helpers repo
-cd /opt/helpers || exit 1
+cd "$HELPERS_DIR/helpers" || exit 1
 
-# Fetch latest changes from GitHub
+# Fetch latest changes from GitHub and reset to match remote
 git fetch origin main
 git reset --hard origin/main
 
-# List of scripts to create symlinks for
-SCRIPTS=("log.sh" "notify.sh")  # <-- modify this list
+# Call the symlink creation script
+if [ -f "$HELPERS_DIR/utils/create_symlinks.sh" ]; then
+    bash "$HELPERS_DIR/utils/create_symlinks.sh"
+else
+    echo "Error: symlink creation script not found at $HELPERS_DIR/utils/create_symlinks.sh"
+    exit 1
+fi
 
-# Create/update symlinks in /usr/local/bin
-for f in "${SCRIPTS[@]}"; do
-    if [ -f "$f" ]; then
-        sudo ln -sf "$PWD/$f" /usr/local/bin/"${f%.sh}"
-    fi
-done

@@ -8,7 +8,7 @@ HELPERS_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 LOG_DIR="/var/log/helpers"
 SYMLINK_SCRIPT="$HELPERS_DIR/utils/create-symlinks.sh"
 HOOK_FILE="/etc/apt/apt.conf.d/99update-helpers"
-HOOK_LINE="DPkg::Post-Invoke { \"$HELPERS_DIR/utils/update-helpers || true\"; };"
+HOOK_LINE="DPkg::Post-Invoke { \"$HELPERS_DIR/utils/update-helpers.sh || true\"; };"
 
 echo "Installing helpers from $HELPERS_DIR ..."
 
