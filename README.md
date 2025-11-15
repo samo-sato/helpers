@@ -31,4 +31,4 @@ NTFY_TOPIC="your-unique-topic-name"
 - Then, as Linux user, log out and log back in to load new environment variable to your shell
 
 3. **Test the helper scripts**
-Run any helper tool with `-h` or `--help` to see usage and examples.
+- Run any helper tool with `-h` or `--help` to see usage and examples.
