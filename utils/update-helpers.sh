@@ -3,6 +3,9 @@
 # Helpers root (one level up from this script)
 HELPERS_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
+# Create log bout this update
+"$HELPERS_DIR/log.sh" -m "Helper update run"
+
 # Go to helpers repo
 cd "$HELPERS_DIR" || exit 1
 
