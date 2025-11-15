@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Helpers root (one level up from this script)
+HELPERS_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+
 # Go to helpers repo
 cd "$HELPERS_DIR" || exit 1
 
