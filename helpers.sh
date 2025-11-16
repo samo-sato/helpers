@@ -2,9 +2,8 @@
 
 echo "Following helper tools are available:"
 
-# List all .sh files in the current directory without the .sh extension
-for file in *.sh; do
-  if [ -e "$file" ]; then
-    echo "${file%.sh}"
-  fi
-done 
+# List all .sh files / helpers (top-level only) without extension
+for f in /opt/helpers/*.sh; do
+    [ -e "$f" ] || continue   # Skip if no .sh files exist
+    basename "$f" .sh
+done
