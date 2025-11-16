@@ -32,6 +32,4 @@ NTFY_TOPIC="your-unique-topic-name"
 
 3. **Test the helper scripts**
 - Run any helper tool with `-h` or `--help` to see usage and examples.
-abc
-123
-xyz
+1515
