@@ -75,4 +75,4 @@ EOF
         ;;
 esac
 
-echo "Installation complete. Helpers are ready and will auto-update after 'apt upgrade'."
+echo "Installation complete"
