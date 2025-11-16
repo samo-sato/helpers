@@ -1,5 +1,4 @@
 #!/bin/bash
-# uninstall.sh - safely removes helpers, symlinks, hook, and optionally logs
 
 set -e  # Exit on error
 
@@ -13,16 +12,9 @@ fi
 HELPERS_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 LOG_DIR="/var/log/helpers"
 SYMLINK_DIR="/usr/local/bin"
-HOOK_FILE="/etc/apt/apt.conf.d/99update-helpers"
 SYMLINK_SCRIPT="$HELPERS_DIR/utils/create-symlinks.sh"
 
 echo "Uninstalling helpers from $HELPERS_DIR ..."
-
-# Remove APT post-upgrade hook
-if [ -f "$HOOK_FILE" ]; then
-    echo "Removing APT post-upgrade hook at $HOOK_FILE ..."
-    sudo rm -f "$HOOK_FILE"
-fi
 
 # Remove symlinks for top-level .sh scripts
 if [ -f "$SYMLINK_SCRIPT" ]; then
