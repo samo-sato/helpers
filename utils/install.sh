@@ -50,16 +50,21 @@ case "$answer" in
 
         cat > /etc/systemd/system/helpers-auto-update.service <<EOF
 [Unit]
-Description=Auto-update helpers on boot
+Description=Update helpers from GitHub on boot
 After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash -c 'echo y | $UPDATER_SCRIPT'
-RemainAfterExit=yes
+ExecStart=/bin/bash -c '\
+  cd /opt/helpers && \
+  git config --global --add safe.directory /opt/helpers && \
+  git fetch origin main && \
+  git reset --hard origin/main && \
+  git clean -fd && \
+  /opt/helpers/utils/create-symlinks.sh \
+'
 User=root
-StandardOutput=journal
-StandardError=journal
+RemainAfterExit=yes
 
 [Install]
 WantedBy=multi-user.target
