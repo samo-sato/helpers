@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Helpers root (one level up from this script)
+# Get helpers root dir name (one level up from this script)
 HELPERS_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
 # Create log bout this update
