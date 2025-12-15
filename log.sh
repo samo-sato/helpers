@@ -84,4 +84,4 @@ else
 fi
 
 # Output to file and echo for user feedback
-echo "$LOG_LINE" >> "$LOG_FILE"
+echo "$LOG_LINE" | tee -a "$LOG_FILE" > /dev/null
