@@ -2,6 +2,21 @@
 A collection of helper scripts for Linux systems.
 More detailed descriptions of individual tools are included within the tools themselves. Just use the `-h` or `--help` flag for any tool, or inspect the script directly.
 
+## Available Tools
+
+Below is a list of helper tools included in this repository along with a brief description of each:
+
+- **backup.sh** - Backup management script to archive files based on retention policies
+- **dirsize.sh** - Displays disk usage of directories in a human-friendly format
+- **getvid.sh** - Downloads video content from a given URL; yt-dlp is used here
+- **helpers.sh** - This is just to list all available helper tools like you see them here in this list
+- **log.sh** - Centralized logging functions for consistent log formatting
+- **notify.sh** - Sends notifications on your phone from shell scripts; ntfy is used here
+- **pack.sh** - Creates compressed archives of specified files or directories
+- **search.sh** - Searches files and text patterns across directories
+- **sysinfo.sh** - Outputs system information
+- **unpack.sh** - Extracts compressed archives into target locations
+
 ## Deployment
 
 1. **Execute**
