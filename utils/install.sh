@@ -36,6 +36,6 @@ mkdir -p "$LOG_DIR"
 
 # Make log directory writable by any user
 echo "Making log directory writable by any user ..."
-chmod 1777 "$LOG_DIR"
+chmod 777 "$LOG_DIR"
 
 echo "Installation complete"

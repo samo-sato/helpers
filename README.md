@@ -32,7 +32,7 @@ sudo /opt/helpers/utils/install.sh
 # This will:
 # - Create symlinks to helper scripts in /usr/local/bin/ so they can be run by name
 # - Add a hook to allow updating the local repo during regular OS upgrades
-# - Create /var/log/helpers and make it writable for users
+# - Create /var/log/helpers and make it writable for anyone
 ```
 
 2. **Configure environment variable:**
