@@ -119,10 +119,21 @@ OPTIONS:
     --help, -h               Show this help message
 
 EXAMPLES:
-    $SCRIPT_NAME /home/bob/backups --include "/home/bob/Documents" --exclude "/tmp"
+    $SCRIPT_NAME /home/bob/backups --include "/home/bob/Documents" --exclude "/home/bob/Documents/Tmp/"
     $SCRIPT_NAME /home/bob/backups --paths /home/bob/paths.yaml --smaller 2 --newer 365
     $SCRIPT_NAME /home/bob/backups --include "/" --exclude "/home/" --dry-run
     $SCRIPT_NAME /home/bob/backups --paths mypaths.yaml --keep-last 5 --keep-monthly 2
+
+EXAMPLE OF YAML FILE:
+-----------------------------
+include:
+  - /home/Bob/Documents/
+  - /var/www/html/
+  - /mnt/data/backups/
+
+exclude:
+  - /home/bob/Documents/Tmp/
+-----------------------------
 
 NOTES:
     - Must be run with sudo
@@ -623,6 +634,7 @@ matches_age_constraint() {
 
 # Check if path should be included
 should_include_path() {
+echo "Calling should_include_path()"
     local path="$1"
     local normalized_path=$(normalize_path "$path")
     normalized_path=$(readlink -f "$normalized_path" 2>/dev/null || echo "$normalized_path")
@@ -631,7 +643,9 @@ should_include_path() {
     for exclude in "${EXCLUDE_PATHS[@]}"; do
         local normalized_exclude=$(normalize_path "$exclude")
         normalized_exclude=$(readlink -f "$normalized_exclude" 2>/dev/null || echo "$normalized_exclude")
-        if [[ "$normalized_path" == "$normalized_exclude"* ]]; then
+        
+        # Check for exact match or if the path is a subdirectory of the excluded path
+        if [[ "$normalized_path" == "$normalized_exclude" || "$normalized_path" == "$normalized_exclude"/* ]]; then
             return 1
         fi
     done
