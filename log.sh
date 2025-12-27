@@ -5,34 +5,28 @@ DEFAULT_LOG_FILE="/var/log/helpers/logs"
 
 LOG_FILE="$DEFAULT_LOG_FILE"
 MESSAGE=""
-CALLER=""
+
+# Default to parent script name immediately
+CALLER=$(ps -p $PPID -o args= | awk '{print $2}')
+[[ -z "$CALLER" ]] && CALLER=$(ps -p $PPID -o comm=)
 
 HELP_TEXT=$(cat <<'EOF'
 Usage:
-log.sh -m "Message text" [-p "Log prefix"] [-f "Log file path"]
+log.sh -m "Message text" [-p "Custom prefix"] [-f "Log file path"]
 
 Options:
   -m   Message text (required)
-  -p   Log prefix (optional)
-       - If -p is followed by a value, that value is used as the prefix.
-       - If -p is used without a value, the script auto-detects the calling 
-         script's name/path.
-       - If -p is omitted entirely, no brackets are added.
+  -p   Custom prefix (optional; defaults to the calling script's path)
   -f   Log file path (optional; default: /var/log/helpers/logs)
   -h   Show this help message
 
-Notes:
-  - If you specify a custom log file with -f, ensure the user running the script
-    has write permissions to the target directory and file.
-  - The script will automatically create the directory path if needed.
-
 Log format:
-  {timestamp} [{log_prefix}] {message}
+  {timestamp} [{prefix}] {message}
+  Note: The brackets and prefix (script name) are now included by default.
 
 Examples:
-  ./log.sh -m "Disk full"                 # No prefix
-  ./log.sh -m "Service stop" -p           # Auto-detects caller (e.g. [/opt/test.sh])
-  ./log.sh -m "Task done" -p "CronJob"    # Uses "CronJob" as prefix
+  ./log.sh -m "Done"             # Result: [2025-12-12 15:47] [/opt/test.sh] Done
+  ./log.sh -m "Done" -p "Cron"   # Result: [2025-12-12 15:47] [Cron] Done
 EOF
 )
 
@@ -47,10 +41,10 @@ if [[ $# -eq 0 ]]; then
 fi
 
 # Parse options
-while getopts "m:pf:h" opt; do
+while getopts "m:p:f:h" opt; do
   case $opt in
     m) MESSAGE="$OPTARG" ;;
-    p) USE_CALLER_NAME=true ;;
+    p) CALLER="$OPTARG" ;; # Overwrites the default script name with custom text
     f) LOG_FILE="$OPTARG" ;;
     h) show_help; exit 0 ;;
     *) show_help; exit 1 ;;
@@ -94,11 +88,7 @@ touch "$LOG_FILE" 2>/dev/null || {
 
 # Build log line
 TIMESTAMP=$(date +"%Y-%m-%d %H:%M")
-if [[ -n "$CALLER" ]]; then
-    LOG_LINE="$TIMESTAMP [$CALLER] $MESSAGE"
-else
-    LOG_LINE="$TIMESTAMP $MESSAGE"
-fi
+LOG_LINE="$TIMESTAMP [$CALLER] $MESSAGE"
 
 # Output to file and echo for user feedback
 echo "$LOG_LINE" | tee -a "$LOG_FILE" > /dev/null
