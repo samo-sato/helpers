@@ -634,7 +634,6 @@ matches_age_constraint() {
 
 # Check if path should be included
 should_include_path() {
-echo "Calling should_include_path()"
     local path="$1"
     local normalized_path=$(normalize_path "$path")
     normalized_path=$(readlink -f "$normalized_path" 2>/dev/null || echo "$normalized_path")
