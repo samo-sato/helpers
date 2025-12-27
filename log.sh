@@ -50,16 +50,36 @@ if [[ $# -eq 0 ]]; then
 fi
 
 # Parse options
-while getopts "m:p:f:h" opt; do
+while getopts "m:pf:h" opt; do
   case $opt in
     m) MESSAGE="$OPTARG" ;;
-    p) CALLER="$OPTARG" ;;
+    p) USE_CALLER_NAME=true ;;
     f) LOG_FILE="$OPTARG" ;;
     h) show_help; exit 0 ;;
     *) show_help; exit 1 ;;
   esac
 done
 
+# Handle optional -p flag:
+# 1. If a value follows -p (and isn't another flag), use it as the prefix.
+# 2. If -p is standalone, auto-detect the calling script's path via Parent Process ID ($PPID).
+if [ "$USE_CALLER_NAME" = true ]; then
+    # Peek at the next argument in the stack
+    NEXT_ARG="${!OPTIND}"
+    
+    # If the next arg exists and doesn't start with "-", it's a custom prefix
+    if [[ -n "$NEXT_ARG" && "$NEXT_ARG" != -* ]]; then
+        CALLER="$NEXT_ARG"
+        OPTIND=$((OPTIND + 1)) # Move pointer forward
+    else
+        # Otherwise, find the command name of the Parent Process ID (PPID)
+        # -o args= gets the full command line of the caller
+        CALLER=$(ps -p $PPID -o args= | awk '{print $2}')
+        
+        # Fallback to process name if path isn't available
+        [[ -z "$CALLER" ]] && CALLER=$(ps -p $PPID -o comm=)
+    fi
+fi
 
 # Validate message
 if [[ -z "$MESSAGE" ]]; then
