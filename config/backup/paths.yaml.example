@@ -1,0 +1,7 @@
+# include:
+#   - /home/Bob/Documents/
+#   - /var/www/html/
+#   - /mnt/data/backups/
+# 
+# exclude:
+#   - /home/bob/Documents/Tmp/
