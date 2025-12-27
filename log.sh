@@ -30,9 +30,12 @@ Examples:
 EOF
 )
 
-show_help() {
-    echo "$HELP_TEXT"
-}
+PARENT_CMD=$(ps -p $PPID -o args= | awk '{print $2}')
+if [[ -z "$PARENT_CMD" ]]; then
+    CALLER=$(ps -p $PPID -o comm=)
+else
+    CALLER=$(readlink -f "$PARENT_CMD" 2>/dev/null || echo "$PARENT_CMD")
+fi
 
 # If no args provided, show help
 if [[ $# -eq 0 ]]; then
