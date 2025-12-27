@@ -1,7 +1,26 @@
 # include:
-#   - /home/Bob/Documents/
-#   - /var/www/html/
-#   - /mnt/data/backups/
-# 
+#   - /etc
+#   - /home
+#   - /root
+#   - /var/www
+#   - /var/mail
+#   - /var/spool/cron
+#   - /var/lib/git
+#   - /opt
+#   - /usr/local
 # exclude:
-#   - /home/bob/Documents/Tmp/
+#   - /proc
+#   - /sys
+#   - /dev
+#   - /run
+#   - /tmp
+#   - /var/tmp
+#   - /var/cache
+#   - /var/lock
+#   - /var/run
+#   - /mnt
+#   - /media
+#   - /cdrom
+#   - /lost+found
+#   - /swapfile
+#   - ~/.local/share/Trash
