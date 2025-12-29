@@ -73,6 +73,9 @@ log_message() {
     fi
 }
 
+# Start logging - BACKUP_START_TIME is set here, but first log message is after validate_destination()
+BACKUP_START_TIME=$(date +%s)
+
 # Print usage information
 usage() {
     cat << EOF
@@ -707,7 +710,7 @@ create_file_list() {
             rm -f "$temp_list.tmp"
         fi
     done
-    
+
     # Return both file paths via global variables
     FILE_LIST_PATH="$temp_list"
     EXCLUDE_LIST_PATH="$temp_exclude_list"
@@ -760,7 +763,7 @@ create_backup() {
     
     # Create tar archive with maximum compression
     # Use --absolute-names to preserve full paths
-    verbose "Compressing $FILES_BACKED_UP files..."
+    verbose "Found $FILES_BACKED_UP files..."
     
     # Create tar command
     # Use process substitution or file lists for excludes
@@ -770,23 +773,29 @@ create_backup() {
             tar_excludes+=(--exclude="$exclude_path")
         done < "$exclude_list"
     fi
-    
     # Execute tar command
     # Note: --exclude with --files-from works, but since we already filter the file list,
     # the excludes are redundant but kept as a safety measure
     local tar_stderr=$(mktemp)
-    if tar -czf "$backup_path" --absolute-names "${tar_excludes[@]}" --files-from="$file_list" 2>"$tar_stderr"; then
+    if tar -czf "$backup_path" --absolute-names --ignore-failed-read "${tar_excludes[@]}" --files-from="$file_list" 2>"$tar_stderr"; then
         local backup_size=$(du -h "$backup_path" | cut -f1)
-        log_message "Backup created successfully: $backup_name (size: $backup_size)"
         verbose "Backup created: $backup_path (size: $backup_size)"
+        
         # Log any warnings from tar (non-fatal errors like permission denied on some files)
         if [ -s "$tar_stderr" ]; then
+            # Count the number of warning lines
+            local warning_count=$(wc -l < "$tar_stderr")
+            # Output the summarized warning to terminal verbose
+	    verbose "Some files could not be backed up [$warning_count item(s)]; see the logfile for more details"
+            
             while IFS= read -r line; do
                 log_message "tar warning: $line"
             done < "$tar_stderr"
         fi
+        
         rm -f "$tar_stderr"
-    else
+        log_message "Backup created: $backup_name (size: $backup_size)"
+    else    
         log_message "Error creating backup archive"
         if [ -s "$tar_stderr" ]; then
             while IFS= read -r line; do
@@ -1161,7 +1170,8 @@ main() {
     # Set up cleanup trap for temporary files
     # Note: Individual functions handle their own temp file cleanup, but this provides
     # a safety net for script interruption
-    trap 'rm -f "${temp_files[@]}" 2>/dev/null; exit' EXIT INT TERM
+    # The EXIT trap for logging will be set after validate_destination() when LOG_FILE is available
+    trap 'rm -f "${temp_files[@]}" 2>/dev/null; exit' INT TERM
     
     # Parse command line arguments
     if [ $# -eq 0 ]; then
@@ -1373,8 +1383,10 @@ main() {
     # Validate destination
     validate_destination
     
-    # Start logging - this must be the first log message
-    BACKUP_START_TIME=$(date +%s)
+    # Set up EXIT trap to log end message and cleanup temp files on any exit (after LOG_FILE is set)
+    trap 'if [ -n "$LOG_FILE" ]; then log_message "########## Backup script ended ##########"; fi; rm -f "${temp_files[@]}" 2>/dev/null' EXIT
+    
+    # Start logging - this must be the first log message (after LOG_FILE is set)
     log_message "########## Backup script started ##########"
     
     # Validate mutual exclusivity BEFORE parsing YAML
@@ -1470,17 +1482,14 @@ main() {
     local end_time=$(date +%s)
     local duration=$((end_time - BACKUP_START_TIME))
     
-    # End logging - summary before final message
-    log_message "Files backed up: $FILES_BACKED_UP"
     if [ "$duration" -eq 0 ]; then
         log_message "Duration: under 1 second"
     else
         log_message "Duration: ${duration} seconds"
     fi
-    # This must be the last log message
-    log_message "########## Backup script ended ##########"
 }
 
 # Run main function
 main "$@"
 
+# Note: The "ended" message is logged via EXIT trap set in main() after validate_destination()
