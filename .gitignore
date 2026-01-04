@@ -1,8 +1,12 @@
 # Ignore backup files
 *.bak
 
-# Ignore custom scripts
+# Ignore custom scripts ...
+# ... but Do not ignore custom scripts directory
+# .gitkeep empty file is just to make git to track this directory
 utils/scripts/custom/*
+!utils/scripts/custom/
+!utils/scripts/custom/.gitkeep
 
 # Ignore custom configs
 utils/config/backup/*
