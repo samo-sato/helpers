@@ -1,0 +1,269 @@
+#!/bin/bash
+
+# Configuration
+# Timeout for the Update action in minutes
+UPDATE_TIMEOUT_MINS=30
+LOG_FILE="/var/log/helpers/off.log"
+
+# Add your command to execute backup process
+# Example:
+# BACKUP_SCRIPT="backup /mnt/backups/incremental --paths /opt/helpers/utils/config/backup/incremental.yaml --smaller 100 --newer"
+BACKUP_SCRIPT=""
+
+
+
+# State tracking
+ACTIONS_PERFORMED=false
+
+# -----------------------------------------------------------------------------
+# Helper Functions
+# -----------------------------------------------------------------------------
+
+# Custom logging wrapper
+log_msg() {
+    local message="$1"
+    # Execute the custom log command as specified
+    if command -v log &> /dev/null; then
+        log -m "$message" -f "$LOG_FILE"
+    else
+        # Fallback if the custom 'log' tool is missing, mostly for testing
+        echo "[FALLBACK LOG] $message"
+    fi
+}
+
+print_usage() {
+    echo "Usage: $(basename "$0") [ACTION]..."
+    echo
+    echo "Execute system actions sequentially."
+    echo
+    echo "Available Actions:"
+    echo "  backup    Execute demo backup script at $BACKUP_SCRIPT"
+    echo "  update    Perform system updates (detects apt, dnf, pacman, zypper)"
+    echo "            (Timeout: ${UPDATE_TIMEOUT_MINS} minutes)"
+    echo "  suspend   Suspend the system immediately"
+    echo "  shutdown  Shutdown the system (delays if preceded by other actions)"
+    echo "  restart   Restart the system (delays if preceded by other actions)"
+    echo
+    echo "Options:"
+    echo "  -h, --help  Show this help message"
+    echo
+    echo "Example:"
+    echo "  $(basename "$0") backup update shutdown"
+}
+
+check_privileges() {
+    if [[ $EUID -ne 0 ]]; then
+        echo "Error: This script must be run as root to perform system actions."
+        exit 1
+    fi
+}
+
+# -----------------------------------------------------------------------------
+# Core Action Functions
+# -----------------------------------------------------------------------------
+
+action_backup() {
+    echo "--- Starting Backup ---"
+    log_msg "Starting Backup action."
+    
+    # Extract the first word (the command name) to verify it exists
+    local cmd_name
+    cmd_name=$(echo "$BACKUP_SCRIPT" | awk '{print $1}')
+
+    if command -v "$cmd_name" &> /dev/null; then
+        # Execute the command string directly
+        if eval "$BACKUP_SCRIPT"; then
+            echo "Backup completed successfully."
+            log_msg "Backup action completed successfully."
+        else
+            echo "Error: Backup command returned a failure code."
+            log_msg "Backup action failed with error code."
+        fi
+    else
+        echo "Error: Backup command '$cmd_name' not found in PATH."
+        log_msg "Backup action failed. Command '$cmd_name' not found."
+    fi
+    
+    ACTIONS_PERFORMED=true
+}
+
+action_update() {
+    echo "--- Starting System Update ---"
+
+    # Check internet connection before update
+    local connected=false
+    for target in "1.1.1.1" "8.8.8.8" "kernel.org"; do
+        if ping -q -c1 -W2 "$target" &>/dev/null; then
+            connected=true
+            break
+        fi
+    done
+
+    if [ "$connected" = false ]; then
+        echo "Error: No internet connection. Skipping update."
+        log_msg "Update action failed: Network unreachable."
+        return 1
+    fi
+
+    log_msg "Starting Update action. Timeout set to ${UPDATE_TIMEOUT_MINS} minutes."
+    
+    local cmd=""
+    local pkg_mgr=""
+
+    # Detect Package Manager
+    if command -v apt-get &> /dev/null; then
+        pkg_mgr="apt"
+        cmd="DEBIAN_FRONTEND=noninteractive apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y"
+    elif command -v dnf &> /dev/null; then
+        pkg_mgr="dnf"
+        cmd="dnf upgrade -y"
+    elif command -v pacman &> /dev/null; then
+        pkg_mgr="pacman"
+        cmd="pacman -Syu --noconfirm"
+    elif command -v zypper &> /dev/null; then
+        pkg_mgr="zypper"
+        cmd="zypper update -y"
+    else
+        echo "Error: No supported package manager found."
+        log_msg "Update action failed. No supported package manager found."
+        ACTIONS_PERFORMED=true
+        return 1
+    fi
+
+    echo "Detected package manager: $pkg_mgr"
+    
+    # 1. System Updates with Timeout
+    # timeout command expects suffix 'm' for minutes
+    if timeout "${UPDATE_TIMEOUT_MINS}m" bash -c "$cmd"; then
+        echo "System packages updated successfully."
+    else
+        local exit_code=$?
+        if [[ $exit_code -eq 124 ]]; then
+            echo "Error: Update timed out after ${UPDATE_TIMEOUT_MINS} minutes."
+            log_msg "Update action failed. Process timed out."
+        else
+            echo "Error: Update process failed."
+            log_msg "Update action failed. Package manager returned error."
+        fi
+        # We continue despite failure as per spec
+    fi
+
+    # 2. Flatpak Updates
+    if command -v flatpak &> /dev/null; then
+        echo "Updating Flatpaks..."
+        # We use </dev/null to prevent the command from hanging on user input
+        if timeout "${UPDATE_TIMEOUT_MINS}m" flatpak update -y </dev/null; then
+            echo "Flatpaks updated."
+        else
+             echo "Error: Flatpak update failed or timed out."
+             log_msg "Update action (Flatpak) encountered errors or timed out."
+        fi
+    fi
+
+    log_msg "Update action finished."
+    ACTIONS_PERFORMED=true
+}
+
+action_suspend() {
+    echo "--- Suspending System ---"
+    log_msg "Executing Suspend action."
+    systemctl suspend
+    ACTIONS_PERFORMED=true
+}
+
+# Generic function for Shutdown and Restart to handle the delay logic
+perform_power_action() {
+    local action_name="$1"  # "shutdown" or "restart"
+    local system_cmd="$2"   # "poweroff" or "reboot"
+
+    log_msg "Initiating $action_name sequence."
+
+    if [[ "$ACTIONS_PERFORMED" == "true" ]]; then
+        echo "--- $action_name Initiated ---"
+        echo "Other actions were performed. Entering 60-second safety delay."
+        echo "Press any key (or Ctrl+C) to CANCEL $action_name."
+        
+        # Countdown loop
+        for i in {60..1}; do
+            echo -ne "Time remaining: $i seconds... \r"
+            # Read with timeout of 1s to check for user input
+            read -t 1 -n 1 key
+            if [[ $? -eq 0 ]]; then
+                echo -e "\n$action_name cancelled by user."
+                log_msg "$action_name action cancelled by user during countdown."
+                ACTIONS_PERFORMED=true
+                return 0
+            fi
+        done
+        echo -e "\nTime's up. Executing $action_name."
+        $system_cmd
+    else
+        echo "Executing immediate $action_name."
+        $system_cmd
+    fi
+    
+    ACTIONS_PERFORMED=true
+}
+
+action_shutdown() {
+    perform_power_action "Shutdown" "poweroff"
+}
+
+action_restart() {
+    perform_power_action "Restart" "reboot"
+}
+
+# -----------------------------------------------------------------------------
+# Main Execution
+# -----------------------------------------------------------------------------
+
+# Check for help flag
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    print_usage
+    exit 0
+fi
+
+# Ensure Root
+check_privileges
+
+# Verify arguments exist
+if [[ $# -eq 0 ]]; then
+    echo "Error: No actions specified."
+    print_usage
+    exit 1
+fi
+
+# Loop through all arguments provided
+for arg in "$@"; do
+    # Normalize argument to lowercase
+    action=$(echo "$arg" | tr '[:upper:]' '[:lower:]')
+
+    case "$action" in
+        backup)
+            action_backup
+            ;;
+        update)
+            action_update
+            ;;
+        suspend)
+            action_suspend
+            ;;
+        shutdown)
+            action_shutdown
+            ;;
+        restart)
+            action_restart
+            ;;
+        *)
+            echo "Error: Invalid action '$arg'."
+            log_msg "Error: Invalid action specified '$arg'."
+            echo "Use -h for a list of available actions."
+            # We do not stop execution for invalid args, just skip?
+            # Spec says "produce a helpful error message". 
+            # Usually strict parsing stops here, but based on "failure... must not stop execution",
+            # we will log and continue.
+            ;;
+    esac
+done
+
+exit 0

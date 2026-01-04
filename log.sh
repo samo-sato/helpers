@@ -30,6 +30,10 @@ Examples:
 EOF
 )
 
+show_help() {
+  echo "$HELP_TEXT"
+}
+
 PARENT_CMD=$(ps -p $PPID -o args= | awk '{print $2}')
 if [[ -z "$PARENT_CMD" ]]; then
     CALLER=$(ps -p $PPID -o comm=)

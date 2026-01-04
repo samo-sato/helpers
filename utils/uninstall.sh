@@ -9,12 +9,12 @@ if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
     exit 0
 fi
 
-HELPERS_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+HELPERS_DIR="/opt/helpers"
 LOG_DIR="/var/log/helpers"
 SYMLINK_DIR="/usr/local/bin"
-SYMLINK_SCRIPT="$HELPERS_DIR/utils/create-symlinks.sh"
+SYMLINK_SCRIPT="$HELPERS_DIR/utils/scripts/create-symlinks.sh"
 
-echo "Uninstalling helpers from $HELPERS_DIR ..."
+echo "Uninstalling helpers ..."
 
 # Remove symlinks for top-level .sh scripts
 if [ -f "$SYMLINK_SCRIPT" ]; then
@@ -36,7 +36,7 @@ else
 fi
 
 # Remove the helpers repo itself
-echo "Removing helpers repo at $HELPERS_DIR ..."
+echo "Removing helpers repo ..."
 sudo rm -rf "$HELPERS_DIR"
 
 echo "Uninstallation complete."

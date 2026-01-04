@@ -1,0 +1,50 @@
+# ============================================================================
+# off.sh Configuration File
+# ============================================================================
+# This file configures the interactive menu system.
+# ============================================================================
+
+# ============================================================================
+# Menu Items
+# ============================================================================
+# Each menu item is defined with:
+# - id: stable string identifier
+# - label: text shown in menu
+# - command: bash command to execute
+# - enabled: true to show in menu, false to hide
+# ============================================================================
+
+[item.date]
+label=Suspend
+command=/opt/helpers/utils/scripts/custom/sys-actions.sh "suspend"
+enabled=true
+
+[item.date]
+label=Shutdown with backup and update
+command=/opt/helpers/utils/scripts/custom/sys-actions.sh "backup" "update" "shutdown"
+enabled=true
+
+[item.date]
+label=Restart with backup and update
+command=/opt/helpers/utils/scripts/custom/sys-actions.sh "backup" "update" "restart"
+enabled=true
+
+[item.date]
+label=Shutdown only
+command=/opt/helpers/utils/scripts/custom/sys-actions.sh "shutdown"
+enabled=true
+
+[item.date]
+label=Restart only
+command=/opt/helpers/utils/scripts/custom/sys-actions.sh "restart"
+enabled=true
+
+[item.date]
+label=Backup only
+command=/opt/helpers/utils/scripts/custom/sys-actions.sh "backup"
+enabled=true
+
+[item.date]
+label=Update only
+command=/opt/helpers/utils/scripts/custom/sys-actions.sh "update"
+enabled=true

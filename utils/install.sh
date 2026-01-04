@@ -7,19 +7,12 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-# Get helpers root dir name (one level up from this script)
-HELPERS_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+HELPERS_DIR="/opt/helpers"
 LOG_DIR="/var/log/helpers"
-SYMLINK_SCRIPT="$HELPERS_DIR/utils/create-symlinks.sh"
+SYMLINK_SCRIPT="$HELPERS_DIR/utils/scripts/create-symlinks.sh"
 UPDATER_SCRIPT="$HELPERS_DIR/utils/update.sh"
 
-echo "Installing helpers from $HELPERS_DIR ..."
-
-# Check if helpers directory exists
-if [ ! -d "$HELPERS_DIR" ]; then
-    echo "Error: $HELPERS_DIR does not exist. Clone the repo first."
-    exit 1
-fi
+echo "Installing helpers"
 
 # Create/update symlinks
 if [ -f "$SYMLINK_SCRIPT" ]; then

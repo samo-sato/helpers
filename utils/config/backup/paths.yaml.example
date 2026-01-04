@@ -1,0 +1,12 @@
+include:
+  - /etc
+  - /home
+  - /root
+  - /var
+  - /opt
+  - /usr/local
+exclude:
+  - /var/log
+  - /var/cache
+  - /var/lock
+  - /var/run

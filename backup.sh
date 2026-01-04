@@ -127,16 +127,7 @@ EXAMPLES:
     $SCRIPT_NAME /home/bob/backups --include "/" --exclude "/home/" --dry-run
     $SCRIPT_NAME /home/bob/backups --paths mypaths.yaml --keep-last 5 --keep-monthly 2
 
-EXAMPLE OF YAML FILE:
------------------------------
-include:
-  - /home/Bob/Documents/
-  - /var/www/html/
-  - /mnt/data/backups/
-
-exclude:
-  - /home/bob/Documents/Tmp/
------------------------------
+EXAMPLE OF YAML FILE: "utils/config/backup/paths.yaml.example"
 
 NOTES:
     - Must be run with sudo

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-HELPERS_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+HELPERS_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
 SYMLINK_DIR="/usr/local/bin"
 
 echo "Creating/updating symlinks for top-level scripts in $HELPERS_DIR ..."

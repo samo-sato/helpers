@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Get helpers root dir name (one level up from this script)
-HELPERS_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+HELPERS_DIR="/opt/helpers"
 
 # Create log bout this update
 "$HELPERS_DIR/log.sh" -m "Helper update run"
@@ -14,7 +14,7 @@ git fetch origin main
 git reset --hard origin/main
 
 # Path to the symlink creation script
-SYMLINK_SCRIPT="$HELPERS_DIR/utils/create-symlinks.sh"
+SYMLINK_SCRIPT="$HELPERS_DIR/utils/scripts/create-symlinks.sh"
 
 # Run the script if it exists, otherwise exit with an error
 if [[ -f "$SYMLINK_SCRIPT" ]]; then
