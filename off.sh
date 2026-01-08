@@ -286,6 +286,18 @@ read_char() {
     echo "$char"
 }
 
+# Flush any pending input from terminal buffer
+flush_input() {
+    # Drain any pending input from stdin
+    # This prevents leftover characters from menu navigation from being
+    # read by subsequent commands that prompt for user input
+    while read -rsn1 -t 0.01 _ 2>/dev/null; do
+        : # Discard input
+    done
+    # Also try to clear using stty if available
+    stty flush 2>/dev/null || true
+}
+
 # ============================================================================
 # Main Menu Loop
 # ============================================================================
@@ -331,6 +343,8 @@ run_menu() {
                 fi
                 TERMINAL_RAW_MODE=false
                 SAVED_STTY=""
+                # Flush any pending input immediately after restoring terminal state
+                flush_input
                 execute_item "$selected"
                 return
                 ;;
@@ -364,6 +378,11 @@ execute_item() {
     
     show_cursor
     clear_screen
+    
+    # Flush any pending input from terminal buffer before executing
+    # This prevents leftover characters from menu navigation (arrow keys, Enter)
+    # from being immediately read by commands that prompt for user input
+    flush_input
     
     # Execute the command
     eval "${menu_commands[$index]}"
