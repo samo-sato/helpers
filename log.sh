@@ -25,8 +25,8 @@ Log format:
   Note: The brackets and prefix (script name) are now included by default.
 
 Examples:
-  ./log.sh -m "Done"             # Result: [2025-12-12 15:47] [/opt/test.sh] Done
-  ./log.sh -m "Done" -p "Cron"   # Result: [2025-12-12 15:47] [Cron] Done
+  ./log.sh -m "Done"             # Result: [2025-12-12 15:47:02] [/opt/test.sh] Done
+  ./log.sh -m "Done" -p "Cron"   # Result: [2025-12-12 15:47:02] [Cron] Done
 EOF
 )
 
@@ -94,7 +94,7 @@ touch "$LOG_FILE" 2>/dev/null || {
 }
 
 # Build log line
-TIMESTAMP=$(date +"%Y-%m-%d %H:%M")
+TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
 LOG_LINE="$TIMESTAMP [$CALLER] $MESSAGE"
 
 # Output to file and echo for user feedback
