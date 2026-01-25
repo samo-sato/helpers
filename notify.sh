@@ -122,6 +122,9 @@ EOF
 # Send request and capture HTTP response code and curl's internal exit status
 # -s: Silent mode, -o /dev/null: discard response body, -w "%{http_code}": write status code
 RESPONSE=$(/usr/bin/curl -s -o /dev/null -w "%{http_code}" \
+  --retry 3 \
+  --retry-delay 2 \
+  --retry-all-errors \
   -X POST \
   -H "Content-Type: application/json" \
   -d "$JSON_PAYLOAD" \
