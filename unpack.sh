@@ -30,11 +30,37 @@ show_help() {
     echo "$HELP_TEXT"
 }
 
+# --- Check for required dependencies ---
+check_dependencies() {
+    local deps=("unzip" "tar" "awk" "mktemp" "wc")
+    local missing=()
+
+    for tool in "${deps[@]}"; do
+        if ! command -v "$tool" &> /dev/null; then
+            missing+=("$tool")
+        fi
+    done
+
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        echo "Error: Required dependencies are missing:" >&2
+        for item in "${missing[@]}"; do
+            echo "  - $item" >&2
+        done
+        echo "" >&2
+        echo "Please install them using your package manager, for example:" >&2
+        echo "sudo apt update && sudo apt install ${missing[*]}" >&2
+        exit 1
+    fi
+}
+
 # --- Show help when no args or when help flag is used ---
 if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
   show_help
   exit 0
 fi
+
+# Verify tools are installed before proceeding
+check_dependencies
 
 archive="$1"
 dest="$2"
